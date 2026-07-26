@@ -30,7 +30,7 @@ Link For Live Website - https://journalapex.netlify.app/login/login
 The repository is organized into isolated modules for authentication and dashboard functionality:
 
 ```text
-TRAIL/
+Aura-Tradez-Journal/
 ├── index.html               # Root redirect file (routes to Login)
 ├── Login/                   # Authentication Module
 │   ├── login.html           # Sign In & Sign Up UI
