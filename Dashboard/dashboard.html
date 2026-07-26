@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XAUUSD (Gold) Professional Trade Journal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Particle Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <div class="app-container">
+    
+    <!-- HEADER -->
+    <header>
+      <div class="brand">
+        <div class="coin-3d-wrapper">
+          <div class="coin-3d">
+            <div class="coin-face">USD</div>
+            <div class="coin-face coin-back">XAU</div>
+          </div>
+        </div>
+        <div>
+          <h1 class="brand-title">XAUU$D JOURNAL</h1>
+          <p style="font-size: 0.75rem; color: var(--text-secondary);">Institutional Gold Analytics</p>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="header-pnl-pill">
+          <span>Net P&amp;L:</span>
+          <span id="header-pnl-val" class="pnl-pos">$0.00</span>
+        </div>
+        <div class="header-actions">
+          <button class="btn" id="export-btn" title="Export CSV (Ctrl+E)">📥 Export</button>
+          <button class="btn btn-danger" id="clear-all-btn" title="Reset Data">🗑️ Reset</button>
+          <!-- Logout Button -->
+          <button class="btn" id="logout-btn" style="border-color: var(--loss); color: var(--loss);" title="Sign Out">🚪 Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- TOP STATS ROW -->
+    <section class="stats-grid-top">
+      <div class="card-3d stat-card">
+        <span class="stat-label">Total Trades</span>
+        <span class="stat-value" id="stat-total-trades">0</span>
+        <span class="stat-sub">Executed Positions</span>
+      </div>
+      <div class="card-3d stat-card">
+        <span class="stat-label">Winning Trades</span>
+        <span class="stat-value" id="stat-win-trades" style="color: var(--profit);">0</span>
+        <span class="stat-sub" id="stat-win-sub">0% Success</span>
+      </div>
+      <div class="card-3d stat-card">
+        <span class="stat-label">Win Rate</span>
+        <span class="stat-value" id="stat-win-rate" style="color: var(--gold-light);">0.0%</span>
+        <span class="stat-sub">Overall Accuracy</span>
+      </div>
+      <div class="card-3d stat-card">
+        <span class="stat-label">Total Cumulative P&amp;L</span>
+        <span class="stat-value" id="stat-total-pnl">$0.00</span>
+        <span class="stat-sub" id="stat-pnl-sub">0 Pips Total</span>
+      </div>
+    </section>
+
+    <!-- MAIN GRID: FORM + CHARTS -->
+    <section class="main-grid">
+      
+      <!-- LEFT: ADD TRADE FORM -->
+      <div class="card-3d form-container">
+        <div class="section-title">⚡ Log XAUUSD Trade</div>
+
+        <form id="trade-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 12px; height: 100%; justify-content: space-between;">
+          <input type="hidden" id="edit-trade-id">
+
+          <!-- DIRECTION TOGGLE -->
+          <div class="form-group">
+            <label class="form-label">Position Type</label>
+            <div class="direction-toggle">
+              <div class="dir-btn buy active" id="dir-buy-btn" onclick="setDirection('BUY')">BUY (Long)</div>
+              <div class="dir-btn sell" id="dir-sell-btn" onclick="setDirection('SELL')">SELL (Short)</div>
+            </div>
+          </div>
+
+          <!-- LOT SIZE PRESETS & INPUT -->
+          <div class="form-group">
+            <label class="form-label">Lot Size</label>
+            <div class="lot-presets">
+              <div class="lot-btn active" onclick="setLotSize(0.01)">0.01</div>
+              <div class="lot-btn" onclick="setLotSize(0.10)">0.10</div>
+              <div class="lot-btn" onclick="setLotSize(1.00)">1.00</div>
+            </div>
+            <input type="number" step="0.01" min="0.01" id="form-lot" class="form-input" value="0.01" required style="margin-top: 6px;">
+          </div>
+
+          <!-- ENTRY & EXIT PRICES -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Entry Price ($)</label>
+              <input type="number" step="0.01" id="form-entry" class="form-input" placeholder="2450.00" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Exit Price ($)</label>
+              <input type="number" step="0.01" id="form-exit" class="form-input" placeholder="2455.00" required>
+            </div>
+          </div>
+
+          <!-- ENTRY / EXIT DATE (ONLY DATE, NO TIME) -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label">Entry Date</label>
+              <input type="date" id="form-entry-date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Exit Date</label>
+              <input type="date" id="form-exit-date" class="form-input" required>
+            </div>
+          </div>
+
+          <!-- NOTES -->
+          <div class="form-group">
+            <label class="form-label">Trade Notes / Strategy</label>
+            <textarea id="form-notes" class="form-textarea" rows="2" placeholder="Breakout confirmation, FVG fill, etc."></textarea>
+          </div>
+
+          <!-- LIVE PREVIEW BOX -->
+          <div class="live-preview">
+            <div class="preview-item">
+              <span class="form-label">Est. Pips</span>
+              <span class="preview-val" id="preview-pips">0.0</span>
+            </div>
+            <div class="preview-item" style="text-align: right;">
+              <span class="form-label">Est. Profit/Loss</span>
+              <span class="preview-val" id="preview-pnl">$0.00</span>
+            </div>
+          </div>
+
+          <!-- FORM ACTIONS -->
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn" onclick="resetForm()" style="flex: 1;">Clear</button>
+            <button type="submit" class="btn btn-gold" id="submit-trade-btn" style="flex: 2;">
+              <span>Submit Trade (Ctrl+↵)</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- RIGHT: CHARTS SECTION (2x2 GRID) -->
+      <div class="charts-grid">
+        <!-- CHART 1: EQUITY CURVE -->
+        <div class="card-3d chart-card">
+          <span class="section-title">📈 Equity Curve (USD)</span>
+          <div class="chart-container">
+            <canvas id="canvas-equity" class="chart-canvas"></canvas>
+            <div class="canvas-tooltip" id="tooltip-equity"></div>
+          </div>
+        </div>
+
+        <!-- CHART 2: WIN/LOSS DONUT -->
+        <div class="card-3d chart-card">
+          <span class="section-title">🍩 Outcome Distribution</span>
+          <div class="chart-container">
+            <canvas id="canvas-donut" class="chart-canvas"></canvas>
+            <div class="canvas-tooltip" id="tooltip-donut"></div>
+          </div>
+        </div>
+
+        <!-- CHART 3: MONTHLY BAR CHART -->
+        <div class="card-3d chart-card">
+          <span class="section-title">📊 Monthly Performance</span>
+          <div class="chart-container">
+            <canvas id="canvas-bar" class="chart-canvas"></canvas>
+            <div class="canvas-tooltip" id="tooltip-bar"></div>
+          </div>
+        </div>
+
+        <!-- CHART 4: WIN RATE GAUGE -->
+        <div class="card-3d chart-card">
+          <span class="section-title">🎯 Win Rate Gauge</span>
+          <div class="chart-container">
+            <canvas id="canvas-gauge" class="chart-canvas"></canvas>
+            <div class="canvas-tooltip" id="tooltip-gauge"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERFORMANCE METRICS ROW -->
+    <section class="metrics-grid">
+      <div class="card-3d metric-card">
+        <span class="metric-title">Profit Factor</span>
+        <span class="metric-value" id="m-profit-factor">0.00</span>
+      </div>
+      <div class="card-3d metric-card">
+        <span class="metric-title">Average Win</span>
+        <span class="metric-value pnl-pos" id="m-avg-win">$0.00</span>
+      </div>
+      <div class="card-3d metric-card">
+        <span class="metric-title">Average Loss</span>
+        <span class="metric-value pnl-neg" id="m-avg-loss">$0.00</span>
+      </div>
+      <div class="card-3d metric-card">
+        <span class="metric-title">Largest Win</span>
+        <span class="metric-value pnl-pos" id="m-max-win">$0.00</span>
+      </div>
+      <div class="card-3d metric-card">
+        <span class="metric-title">Largest Loss</span>
+        <span class="metric-value pnl-neg" id="m-max-loss">$0.00</span>
+      </div>
+      <div class="card-3d metric-card">
+        <span class="metric-title">Max Drawdown</span>
+        <span class="metric-value pnl-neg" id="m-max-dd">0.0%</span>
+      </div>
+    </section>
+
+    <!-- TRADE HISTORY TABLE -->
+    <section class="card-3d" style="padding: 0; overflow: hidden;">
+      <div class="table-controls">
+        <div class="search-filter-group">
+          <input type="text" id="table-search" class="form-input" placeholder="🔍 Search notes, prices..." style="width: 220px;" oninput="onFilterChange()">
+          <select id="filter-dir" class="form-select" onchange="onFilterChange()">
+            <option value="ALL">All Directions</option>
+            <option value="BUY">BUY Only</option>
+            <option value="SELL">SELL Only</option>
+          </select>
+          <select id="filter-outcome" class="form-select" onchange="onFilterChange()">
+            <option value="ALL">All Outcomes</option>
+            <option value="WIN">Profitable</option>
+            <option value="LOSS">Losing</option>
+          </select>
+        </div>
+        <div style="color: var(--text-secondary); font-size: 0.85rem;" id="table-count-label">
+          Showing 0 trades
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortTable('id')">#</th>
+              <th onclick="sortTable('entryDate')">Entry Date ⇕</th>
+              <th onclick="sortTable('direction')">Type ⇕</th>
+              <th onclick="sortTable('lotSize')">Lots ⇕</th>
+              <th onclick="sortTable('entryPrice')">Entry ⇕</th>
+              <th onclick="sortTable('exitPrice')">Exit ⇕</th>
+              <th onclick="sortTable('pips')">Pips ⇕</th>
+              <th onclick="sortTable('profitLoss')">P&amp;L ($) ⇕</th>
+              <th>Notes</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="trade-tbody">
+            <!-- Dynamic Rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-bar">
+        <span id="page-info" style="font-size: 0.85rem; color: var(--text-secondary);">Page 1 of 1</span>
+        <div class="page-btns" id="pagination-btns"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="custom-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title" style="font-size: 1.2rem; font-weight: 800;">Confirm Action</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <p id="modal-body" style="color: var(--text-secondary); font-size: 0.95rem;">Are you sure?</p>
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-danger" id="modal-confirm-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Type="module" is necessary for Firebase SDKs -->
+  <script type="module" src="script.js"></script>
+</body>
+</html>
