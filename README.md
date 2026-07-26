@@ -2,6 +2,8 @@
 
 A secure, multi-user web application designed for day traders to log, track, and analyze their XAUUSD (Gold) trades. Built with a modern Glassmorphism UI, interactive 3D elements, and powered by Firebase for real-time data synchronization and authentication.
 
+Link For Live Website - https://journalapex.netlify.app/login/login
+
 ## 🚀 Features
 
 * **Secure Authentication:** Multi-user support with Sign Up, Sign In, and Password Reset functionality using Firebase Auth.
@@ -40,5 +42,3 @@ TRAIL/
     ├── dashboard.html       # Analytics & Trade Table UI
     ├── script.js            # Firestore CRUD operations & Chart rendering
     └── style.css            # Dashboard layout & theming
-
-Link For Live Website - https://journalapex.netlify.app/login/login
