@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password - XAUUSD Journal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <canvas id="bg-canvas"></canvas>
+
+  <main class="viewport-container">
+    <div class="card-3d-wrapper" id="cardWrapper">
+      <article class="glass-card" id="glassCard">
+        <div class="card-shine"></div>
+
+        <header class="card-header">
+          <div class="logo-box">
+            <svg class="logo-svg" viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h1>Reset Password</h1>
+          <p>Enter your email to receive a reset link</p>
+          <div class="glow-underline"></div>
+        </header>
+
+        <form class="auth-form active" id="forgotForm" novalidate>
+          <div class="input-group" id="emailGroup">
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <input type="email" id="resetEmail" class="form-input" placeholder=" " required />
+              <label for="resetEmail" class="floating-label">Email Address</label>
+            </div>
+            <div class="error-msg">Please enter a valid email address</div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="resetBtn">
+            <span class="btn-text">Send Reset Link</span>
+            <span class="btn-spinner"></span>
+          </button>
+        </form>
+
+        <footer class="card-footer" style="margin-top: 30px;">
+          Remember your password? <a href="login.html">Sign in</a>
+        </footer>
+
+      </article>
+    </div>
+  </main>
+
+  <script type="module" src="forgot.js"></script>
+</body>
+</html>
